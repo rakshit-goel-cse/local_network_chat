@@ -25,13 +25,14 @@ export default function AddMsg({addChat}){
     })
     }
     return(
-        <div className="container" style={mainDiv()}>
+        <div className="container col" style={mainDiv()}>
             <form>
                 <input id="msgTextArea" type='text' onChange={onChange} value={msg} 
-                className="green darken-1  yellow-text text-accent-2"></input>
-                <div className="btn right">
+                className="green darken-1  yellow-text text-accent-2 col s10" placeholder="Type Here"></input>
+                
+                <button className="btn right" onClick={()=>{onClicked()}}>
                     <i className="material-icon">send</i>
-                </div>
+                </button>
             </form>
         </div>
     )

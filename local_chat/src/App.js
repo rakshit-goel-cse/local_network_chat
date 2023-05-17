@@ -22,19 +22,7 @@ if(userName==='' || null===userName){
   }
   console.log(userName)
 }
-/*React.useEffect(()=>{
-  console.log("userName- ",userName)
-  //while(userName===''){
-  let user = prompt('Please Enter your Name')
-  if (user === null || user === "") {
-    console.log("User cancelled the prompt.");
-  }
-  console.log("user- ",user)
-  setUserName(()=>{return('aaaaa')})
-  console.log("Name- ",userName)
-  //  }
-},[])
-*/
+
 React.useEffect(() => {
   axios.get("http://192.168.29.231:8000/data").then((response) => {
 //    console.log("axios.get on launch",response.data)
@@ -65,9 +53,9 @@ React.useEffect(() => {
   };
  
   return (
-    <div>
-      <h5>{App.userName}</h5>
-      <ChatBox chatData={chatData}/>
+    <div className='container row left grey lighten-4'>
+      <h5 className=' orange teal-text text-darken-1 center'>{userName}</h5>
+      <ChatBox chatData={chatData} userName={userName}/>
       <AddMsg addChat={addChat}/>
     </div>
   );
