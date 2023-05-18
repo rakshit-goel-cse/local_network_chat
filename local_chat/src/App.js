@@ -19,6 +19,11 @@ useEffect(()=>{
   localStorage.setItem("user",JSON.stringify(userName));
 },[userName]);
 
+const logout=()=>{
+  localStorage.removeItem("user");
+  setUserNam("")
+}
+
 //get data from backend every second
 React.useEffect(() => {
   axios.get("http://192.168.29.231:8000/data").then((response) => {
@@ -53,7 +58,7 @@ React.useEffect(() => {
 
   if (userName === null || userName === "" ) {
     const tempUser = JSON.parse(localStorage.getItem("user"));
-    console.log("tempData- ",tempUser)
+    //console.log("tempData- ",tempUser)
     if(tempUser && tempUser.length>1){
       setUserNam(tempUser)
     }
@@ -65,7 +70,9 @@ React.useEffect(() => {
   }
   return (
     <div className='container row left grey lighten-4'>
-      <h5 className=' orange teal-text text-darken-1 center'>{userName}</h5>
+      <h5 className=' orange teal-text text-darken-2 '>{userName}
+      <label className=' waves-effect btn-small right red white-text' onClick={logout}>LogOut</label>
+      </h5>
       <ChatBox chatData={chatData} userName={userName}/>
       <AddMsg addChat={addChat}/>
     </div>
