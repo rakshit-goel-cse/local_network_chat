@@ -11,10 +11,13 @@ app.use(cors())
 const data=[];
 
 app.post("/",async(req,res)=>{
-    const {msg}=req.body
-    if(null!=msg && msg!=''){
-        data.push(msg)
-        console.log(msg)
+    //console.log("data ",req.body.user)
+    const dataMap=req.body
+    //const msg=dataMap.get("msg")
+
+    if(null!=dataMap){
+        data.push(dataMap)
+        console.log(dataMap)
         res.send(data)
     }
     else{
