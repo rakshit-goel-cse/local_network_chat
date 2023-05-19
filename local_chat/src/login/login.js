@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import axios from "axios";
 
 export default function Login(props){
     let [userName,setName]=React.useState("");
@@ -17,12 +18,39 @@ export default function Login(props){
         }
     },[userName]);
 
-    const submitt=()=>{
-        console.log("user- ",userName)
+     const submitt= async ()=>{
+        let flag=true;
+        //console.log("user- ",userName)
         
         if(userName===""){
             return
         }
+        
+        try {
+            await  axios
+              .post("http://192.168.29.231:8000/user", {
+                user: userName
+              })
+              .then((response) => {
+                //console.log("axios.setUser", response.data);
+                //console.log(response.data)
+                if(response.data){
+                    //console.log('return false')
+                    flag= false;
+                }
+              });
+          } catch (e) {
+            console.log("error in front end axios" + e);
+          }
+
+        //console.log("call user res- ",flag)
+        if(flag){
+            //console.log("entered return")
+            window.alert("user exists")
+            setName('')
+            return
+        }
+        //console.log("not returned")
         props.setUser(userName);
     }
 
@@ -45,7 +73,7 @@ export default function Login(props){
         transform: 'translate(-50%, -50%)',padding:'2%'}}
          className='z-depth-4 orange lighten-2' >
             <label className='black-text text-darken-4'>User Name</label>
-            <input id="userName" type='Text' onChange={change} ></input>
+            <input id="userName" type='Text' onChange={change} value={userName} ></input>
             <label id="submitButton" type='submit' onClick={submitt}
             >Log In</label>
         </div>

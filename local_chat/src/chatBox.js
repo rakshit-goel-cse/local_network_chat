@@ -12,14 +12,14 @@ export default function ChatBox(props){
                     return <div style={{paddingRight:"1%"}}>
                                 <h6 id="chatItem" className="pink-text grey lighten-3 validate" 
                                     style={{textAlign:"right",paddingRight:"1%"}} >
-                                <label for='chatItem'>{data.user}</label>
+                                <label >{data.user}</label>
                                 {" "+data.msg}
                                 </h6>
                             </div>
                 }
                 return <div style={{paddingRight:"1%"}}>
                             <h6 id="chatItem" className="pink-text grey lighten-3 validate" >
-                            <label for='chatItem'>{data.user}</label>
+                            <label>{data.user}</label>
                             {" "+data.msg}
                             </h6>
                         </div>
