@@ -7,7 +7,6 @@ import Login from "./login/login";
 function App() {
   
   const [userName, setUserNam] = React.useState("");
-  let flag=true;
 
   //  const bc= new BroadcastChannel("chatBoox");
   //  bc.addEventListener("message", e=>{
@@ -58,14 +57,21 @@ function MainLaunch({userName,logout}){
 
   React.useEffect(() => {
     axios.get("http://192.168.29.231:8000/data").then((response) => {
-      //    console.log("axios.get on launch",response.data)
-      setChatData(response.data);
+         console.log("axios.get on launch",chatData.length,response.data.length)
+      if(chatData.length!=response.data.length){
+        setChatData(response.data);
+      }
     });
-  }, [
+  }, 
     setInterval(() => {
-      return
+      axios.get("http://192.168.29.231:8000/data").then((response) => {
+         //console.log("axios.get in interval",chatData.length,response.data.length)
+      if(chatData.length!=response.data.length){
+        setChatData(response.data);
+      }
+    });
     }, 1000)
-  ]);
+  );
 
   //set data at backend when adding text
   const addChat = async (msg) => {
@@ -113,7 +119,7 @@ function MainLaunch({userName,logout}){
           LogOut
         </label>
       </h5>
-      <ChatBox chatData={chatData} userName={userName} />
+      <ChatBox chatData={chatData} userName={userName} deleteChat={deleteChat}/>
       <AddMsg addChat={addChat} />
     </div>
   );

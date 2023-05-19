@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import axios from "axios";
 
 export default function Login(props){
@@ -54,18 +54,24 @@ export default function Login(props){
         props.setUser(userName);
     }
 
-    //const textAreaElement=document.getElementById("mainDiv")
-    
-    /*if(null!=textAreaElement){
-       // console.log(textAreaElement)
+    /*const textAreaElement=document.getElementById("userName")
+    if(null!=textAreaElement){
     textAreaElement.addEventListener("keyup",(event)=>{
         event.preventDefault();
-       // console.log(event.key)
-        if(event.key === 'Enter'){
-            document.getElementById("submitButton").click()
+        console.log("event ",event.key==="Enter")
+        if(event.key === "Enter"){
+            document.getElementById("submitButton").click();
         }
     })
     }*/
+
+    const HandlEvent=(e)=>{
+        //e.preventDefault();
+        //console.log(e);
+        if(e.key === "Enter"){
+            document.getElementById("submitButton").click();
+        }
+    }
 
     return(
         <div id="mainDiv" 
@@ -73,7 +79,7 @@ export default function Login(props){
         transform: 'translate(-50%, -50%)',padding:'2%'}}
          className='z-depth-4 orange lighten-2' >
             <label className='black-text text-darken-4'>User Name</label>
-            <input id="userName" type='Text' onChange={change} value={userName} ></input>
+            <input id="userName" type='Text' onChange={change} value={userName} onKeyDownCapture={HandlEvent}></input>
             <label id="submitButton" type='submit' onClick={submitt}
             >Log In</label>
         </div>

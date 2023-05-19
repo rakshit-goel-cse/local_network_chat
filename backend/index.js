@@ -8,7 +8,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors())
 
-const data=[];
+let data=[];
 let users=[];
 let id=0;
 
@@ -16,8 +16,8 @@ app.post("/",async(req,res)=>{
     const dataMap=req.body
     if(null!=dataMap){
         id=id+1;
-        data.push({id:{id},...dataMap})
-        console.log(dataMap)
+        data.push({id,...dataMap})
+        console.log(data)
         res.send(data)
     }
     else{
@@ -77,12 +77,13 @@ app.post("/logout",async(req,res)=>{
 })
 
 app.post("/delete",async(req,res)=>{
-    const id=req.body.id
-    if(null!=id){
+    const body=req.body
+    //console.log(body)
+    if(null!=body && null!=body.id){
+        let id=body.id
         data=data.filter((data)=>{
             return(data.id!=id)
         })
-        console.log("delete ",dataMap)
         res.send(data)
     }
     else{
