@@ -18,7 +18,7 @@ app.post("/",async(req,res)=>{
         id=id+1;
         data.push({id,...dataMap})
         console.log(data)
-        res.send(data)
+        
     }
     else{
         console.log("empty input",data)
@@ -27,7 +27,8 @@ app.post("/",async(req,res)=>{
 
 app.get("/data",(req,res)=>{
 //    console.log("get data")
-   res.send(data)
+   //res.send(data)
+   res.send({data:data,users:users})
 })
 
 //app.put("/",msg)

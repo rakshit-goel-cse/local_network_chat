@@ -7,7 +7,6 @@ import Login from "./login/login";
 function App() {
   
   const [userName, setUserNam] = React.useState("");
-
   //  const bc= new BroadcastChannel("chatBoox");
   //  bc.addEventListener("message", e=>{
   //    setChatData([...chatData,e.data]);
@@ -46,6 +45,7 @@ function App() {
     }
   } else {
     //get data from backend every second
+    
     return(
     <MainLaunch userName={userName} logout={logout}/>
     )
@@ -54,20 +54,38 @@ function App() {
 
 function MainLaunch({userName,logout}){
   const [chatData, setChatData] = React.useState([]);
-
   React.useEffect(() => {
     axios.get("http://192.168.29.231:8000/data").then((response) => {
-         console.log("axios.get on launch",chatData.length,response.data.length)
-      if(chatData.length!=response.data.length){
-        setChatData(response.data);
+         console.log("axios.get on launch ",response)
+      
+         if(response.data.users.length<1){
+            logout();
+         }
+         else{
+          let flag =true;
+          response.data.users.map((item)=>{
+            if(item==userName){
+              flag=false;
+            }
+          })
+          if(flag){
+            logout()
+          }
+        }
+
+         if(chatData.length!=response.data.data.length){
+        setChatData(response.data.data);
       }
+      
     });
   }, 
-    setInterval(() => {
+     setInterval(() => {
       axios.get("http://192.168.29.231:8000/data").then((response) => {
          //console.log("axios.get in interval",chatData.length,response.data.length)
-      if(chatData.length!=response.data.length){
-        setChatData(response.data);
+      if(chatData.length!=response.data.data.length){
+        //console.log("axios.get in interval inside",chatData,response.data)
+        setChatData(response.data.data);
+        //console.log("axios.get in interval inside 2 ",chatData)
       }
     });
     }, 1000)
@@ -110,6 +128,7 @@ function MainLaunch({userName,logout}){
 
   return (
     <div className="container row left grey lighten-4">
+      
       <h5 className=" orange teal-text text-darken-2 ">
         {userName}
         <label
