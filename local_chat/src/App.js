@@ -3,6 +3,7 @@ import ChatBox from "./chatBox";
 import AddMsg from "./addMessage";
 import axios from "axios";
 import Login from "./login/login";
+import UsersOnline from "./usersOnline";
 
 function App() {
   
@@ -54,6 +55,8 @@ function App() {
 
 function MainLaunch({userName,logout}){
   const [chatData, setChatData] = React.useState([]);
+  const [users,setUsers]= React.useState([]);
+
   React.useEffect(() => {
     axios.get("http://192.168.29.231:8000/data").then((response) => {
          console.log("axios.get on launch ",response)
@@ -70,6 +73,9 @@ function MainLaunch({userName,logout}){
           })
           if(flag){
             logout()
+          }
+          else{
+            setUsers(response.data.users)
           }
         }
 
@@ -129,6 +135,8 @@ function MainLaunch({userName,logout}){
   return (
     <div className="container row left grey lighten-4">
       
+      <UsersOnline users={users} />
+
       <h5 className=" orange teal-text text-darken-2 ">
         {userName}
         <label
