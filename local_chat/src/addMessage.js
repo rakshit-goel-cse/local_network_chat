@@ -7,7 +7,8 @@ export default function AddMsg({addChat}){
     const onChange=(event)=>{
         setmsg(event.target.value);
     }
-    const onClicked=()=>{
+    const onClicked=(e)=>{
+        e.preventDefault();
         if(msg===''){
             return
         }
@@ -30,7 +31,7 @@ export default function AddMsg({addChat}){
                 <input id="msgTextArea" type='text' onChange={onChange} value={msg} 
                 className="green darken-1  yellow-text text-accent-2 col s10" placeholder="Type Here"></input>
                 
-                <button className="btn right" onClick={()=>{onClicked()}}>
+                <button className="btn right" onClick={(event)=>{onClicked(event)}}>
                     <i className="material-icon">send</i>
                 </button>
             </form>

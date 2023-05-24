@@ -4,9 +4,11 @@ import AddMsg from "./addMessage";
 import axios from "axios";
 import Login from "./login/login";
 import UsersOnline from "./usersOnline";
+import notiSound from "./notification/notification_sound.wav";
 
+let timer=null;
+let called=false;
 function App() {
-  
   const [userName, setUserNam] = React.useState("");
   //  const bc= new BroadcastChannel("chatBoox");
   //  bc.addEventListener("message", e=>{
@@ -20,21 +22,17 @@ function App() {
     localStorage.setItem("user", JSON.stringify(userName));
   }, [userName]);
 
-  const logout = async() => {
+  const logout = async () => {
     localStorage.removeItem("user");
     setUserNam("");
     try {
-      await axios
-        .post("http://192.168.29.231:8000/logout", {
-          user: userName
-        });
+      await axios.post("http://192.168.29.231:8000/logout", {
+        user: userName,
+      });
     } catch (e) {
       console.log("error in front end axios" + e);
     }
-    
   };
-
-  
 
   if (userName === null || userName === "") {
     const tempUser = JSON.parse(localStorage.getItem("user"));
@@ -46,56 +44,87 @@ function App() {
     }
   } else {
     //get data from backend every second
-    
-    return(
-    <MainLaunch userName={userName} logout={logout}/>
-    )
+
+    return <MainLaunch userName={userName} logout={logout} />;
   }
 }
 
-function MainLaunch({userName,logout}){
-  const [chatData, setChatData] = React.useState([]);
-  const [users,setUsers]= React.useState([]);
-
-  React.useEffect(() => {
-    axios.get("http://192.168.29.231:8000/data").then((response) => {
-         console.log("axios.get on launch ",response)
-      
-         if(response.data.users.length<1){
-            logout();
-         }
-         else{
-          let flag =true;
-          response.data.users.map((item)=>{
-            if(item==userName){
-              flag=false;
-            }
-          })
-          if(flag){
-            logout()
+function SetTimmer(chatData,setChatData,users,setUsers){
+  return(setInterval(() => {
+    try {
+      axios.get("http://192.168.29.231:8000/data").then((response) => {
+        console.log("axios.get in interval",chatData.length,response,response.data, response.data.data, response.data.data.length)
+        if (users.length != response.data.users.length) {
+          setUsers(response.data.users);
+        }
+        
+        if (chatData.length != response.data.data.length) {
+          setChatData(response.data.data);
+        }
+          //console.log("axios.get in interval inside",alertSound)
+        /*  if (null != alertSound && null != alertSound.current) {
+            //alertSound.current.click();
+            //alertSound.current.play();
           }
-          else{
-            setUsers(response.data.users)
+          setChatData(response.data.data);
+          //console.log("axios.get in interval inside 2 ",chatData)
+        }*/
+      });
+    } catch (error) {
+      console.log("error in front end axios get time interval" + error);
+    }
+  }
+  , 2000)
+  )
+}
+
+
+function MainLaunch({ userName, logout }) {
+  const [chatData, setChatData] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
+  let alertSound = React.useRef(null);
+
+  
+  React.useEffect(() => {
+    try {
+      axios.get("http://192.168.29.231:8000/data").then((response) => {
+        console.log("axios.get on launch ",response)
+        if (response.data.users.length < 1) {
+          logout();
+        } else {
+          let flag = true;
+          response.data.users.map((item) => {
+            if (item == userName) {
+              flag = false;
+            }
+          });
+          if (flag) {
+            logout();
+          } else {
+            if (users.length != response.data.users.length) {
+              setUsers(response.data.users);
+            }
           }
         }
 
-         if(chatData.length!=response.data.data.length){
-        setChatData(response.data.data);
+        if (chatData.length != response.data.data.length) {
+          setChatData(response.data.data);
+        }
+      });
+      if(timer){
+        clearTimeout(timer)
+        timer=SetTimmer(chatData, setChatData, users, setUsers)
       }
-      
-    });
-  }, 
-     setInterval(() => {
-      axios.get("http://192.168.29.231:8000/data").then((response) => {
-         //console.log("axios.get in interval",chatData.length,response.data.length)
-      if(chatData.length!=response.data.data.length){
-        //console.log("axios.get in interval inside",chatData,response.data)
-        setChatData(response.data.data);
-        //console.log("axios.get in interval inside 2 ",chatData)
-      }
-    });
-    }, 1000)
-  );
+      //
+    } catch (error) {
+      console.log("error in front end get axios" + error);
+    }
+  }, [
+  ]);
+
+  if(!timer){
+  timer=SetTimmer(chatData, setChatData , users, setUsers)
+}
 
   //set data at backend when adding text
   const addChat = async (msg) => {
@@ -115,13 +144,13 @@ function MainLaunch({userName,logout}){
     }
   };
 
-   //delete data at backend
-   const deleteChat = async (id) => {
+  //delete data at backend
+  const deleteChat = async (id) => {
     console.log("id- " + id);
     try {
       await axios
         .post("http://192.168.29.231:8000/delete", {
-          id:id
+          id: id,
         })
         .then((response) => {
           console.log("axios.get", response.data);
@@ -134,10 +163,10 @@ function MainLaunch({userName,logout}){
 
   return (
     <div className="container row left grey lighten-4">
-      
-      <UsersOnline users={users} />
+      <audio ref={alertSound} src={notiSound} autoPlay={false} muted={true} />
+      <UsersOnline key="user" users={users} />
 
-      <h5 className=" orange teal-text text-darken-2 ">
+      <h5 className=" orange teal-text text-darken-2 " style={{ width: "80%" }}>
         {userName}
         <label
           className=" waves-effect btn-small right red white-text"
@@ -146,8 +175,13 @@ function MainLaunch({userName,logout}){
           LogOut
         </label>
       </h5>
-      <ChatBox chatData={chatData} userName={userName} deleteChat={deleteChat}/>
-      <AddMsg addChat={addChat} />
+      <ChatBox
+        key="chatBox"
+        chatData={chatData}
+        userName={userName}
+        deleteChat={deleteChat}
+      />
+      <AddMsg key="addChat" addChat={addChat} />
     </div>
   );
 }

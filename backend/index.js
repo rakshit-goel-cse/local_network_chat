@@ -8,6 +8,8 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors())
 
+cors({ origin : [ "http://192.168.29.231:3000"]})
+
 let data=[];
 let users=[];
 let id=0;
