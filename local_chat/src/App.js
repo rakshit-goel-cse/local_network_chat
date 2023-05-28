@@ -53,7 +53,7 @@ function SetTimmer(chatData,setChatData,users,setUsers){
   return(setInterval(() => {
     try {
       axios.get("http://192.168.29.231:8000/data").then((response) => {
-        console.log("axios.get in interval",chatData.length,response,response.data, response.data.data, response.data.data.length)
+        console.log("axios.get in interval",chatData,chatData.length,response,response.data, response.data.data, response.data.data.length)
         if (users.length != response.data.users.length) {
           setUsers(response.data.users);
         }

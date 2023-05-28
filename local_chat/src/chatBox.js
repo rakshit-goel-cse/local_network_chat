@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import Sound from "react-sound";
+//import notification_sound from "./notification"
 
 export default function ChatBox(props){
     const [show, setShow]=useState()
@@ -6,6 +8,7 @@ export default function ChatBox(props){
     const [y, sety]=useState(0)
     let btnRef=useRef()
     let endRef=useRef()
+    let soundRef=useRef()
 
     //show delete option
     const Menu=({id,x,y,deleteChat})=>{
@@ -32,10 +35,6 @@ export default function ChatBox(props){
         //sety(e.pagey)
     }
 
-    /*useEffect(()=>{
-        endRef.
-    })*/
-
     useEffect(()=>{
         let handler=(e)=>{             
             if(btnRef!=undefined && btnRef.current!=undefined && btnRef.current.id!=null 
@@ -49,32 +48,54 @@ export default function ChatBox(props){
 
     const scrollToBottom = () => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
+        soundRef.current.playStatus=Sound.status.PLAYING;
       }
       
       useEffect(()=>{
         scrollToBottom()
       },[props.chatData])
 
+      const handleSongLoading =({object,loaded})=>{
+        console.log("sound loaded ",loaded)
+        if(loaded){
+            soundRef.current.playStatus=Sound.status.PLAYING;
+        }
+      }
+      const handleSongPlaying=()=>{}
+      const handleSongFinishedPlaying=()=>{}
+
     return(
     <div style={{position:"fixed", height:"70%", overflow:"auto",scrollBehavior:"smooth",width:"75%"}}
     className="z-depth-1 ">
-        {      
+
+        <Sound url="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
+        ref={soundRef}
+        volume={100}
+      autoLoad={true}
+      
+      onLoading={handleSongLoading}
+      onPlaying={handleSongPlaying}
+      onFinishedPlaying={handleSongFinishedPlaying}
+      
+      ></Sound>
+
+        {   
             props.chatData.map((data)=>
-            {
+            {   //console.log("show chat ",data)
                 if(data.user===props.userName){
-                    return (<div key={'div'+data.id} id={'div'+data.id} style={{paddingRight:"1%"}}>
-                                 {show==data.id && <Menu id={'M'+data.id} x={x} y={y} deleteChat={props.deleteChat}/>}
-                                <h6 id={data.id} className="pink-text grey lighten-3 validate" 
+                    return (<div key={'div'+data._id} id={'div'+data._id} style={{paddingRight:"1%"}}>
+                                 {show==data._id && <Menu id={'M'+data._id} x={x} y={y} deleteChat={props.deleteChat}/>}
+                                <h6 id={data._id} className="pink-text grey lighten-3 validate" 
                                     style={{textAlign:"right",paddingRight:"1%"}} onContextMenu={Divevent}>       
-                                <label id={'label'+data.id} >{data.user}</label>
+                                <label id={'label'+data._id} >{data.user}</label>
                                 {" "+data.msg}
                                 </h6>
                             </div>)
                 }
-                return (<div key={'div'+data.id} id={'div'+data.id} style={{paddingRight:"1%"}}>
-                            {/*show==data.id && <Menu id={data.id} x={x} y={y} deleteChat={props.deleteChat}/>*/}
-                            <h6 id={data.id} className="pink-text grey lighten-3 validate" onContextMenu={Divevent} >
-                            <label id={'label'+data.id}>{data.user}</label>
+                return (<div key={'div'+data._id} id={'div'+data._id} style={{paddingRight:"1%"}}>
+                            {/*show==data._id && <Menu id={data._id} x={x} y={y} deleteChat={props.deleteChat}/>*/}
+                            <h6 id={data._id} className="pink-text grey lighten-3 validate" onContextMenu={Divevent} >
+                            <label id={'label'+data._id}>{data.user}</label>
                             {" "+data.msg}
                             </h6>
                         </div>)
