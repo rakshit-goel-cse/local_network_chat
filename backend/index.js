@@ -37,7 +37,7 @@ app.post("/",async(req,res)=>{
 app.get("/data",async(req,res)=>{
 //    console.log("get data")
    //res.send(data)
-   data=await getData();
+   //data=await getData();
    res.send({data:data,users:users})
 })
 
